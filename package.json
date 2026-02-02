@@ -1,0 +1,32 @@
+{
+  "name": "snapshot-cli",
+  "version": "0.1.0",
+  "description": "CLI that saves Playwright snapshots to files for agent-friendly reading.",
+  "bin": {
+    "psnap": "dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "types": "dist/cli.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "format": "biome format .",
+    "lint": "biome lint .",
+    "check": "biome check .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "postinstall": "node scripts/lefthook-install.js"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "playwright": "^1.43.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@biomejs/biome": "^1.7.3",
+    "lefthook": "^1.6.18",
+    "typescript": "^5.4.5"
+  }
+}
