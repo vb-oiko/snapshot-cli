@@ -24,32 +24,40 @@ type GenericSession = {
 };
 
 async function getFullAxTree(session: GenericSession): Promise<AxTreeResponse> {
-  const result = (await session.send("Accessibility.getFullAXTree")) as AxTreeResponse;
+  const result = (await session.send(
+    "Accessibility.getFullAXTree",
+  )) as AxTreeResponse;
   return result;
 }
 
 async function getPartialAxTree(
   session: GenericSession,
-  nodeId: number
+  nodeId: number,
 ): Promise<AxTreeResponse> {
-  const result = (await session.send("Accessibility.getPartialAXTree", { nodeId })) as AxTreeResponse;
+  const result = (await session.send("Accessibility.getPartialAXTree", {
+    nodeId,
+  })) as AxTreeResponse;
   return result;
 }
 
 async function resolveDomNodeId(
   session: GenericSession,
-  selector: string
+  selector: string,
 ): Promise<number> {
-  const { root } = (await session.send("DOM.getDocument")) as { root: { nodeId: number } };
+  const { root } = (await session.send("DOM.getDocument")) as {
+    root: { nodeId: number };
+  };
   const { nodeId } = (await session.send("DOM.querySelector", {
     nodeId: root.nodeId,
-    selector
+    selector,
   })) as { nodeId: number };
 
   return nodeId;
 }
 
-function extractValue(value: AxValue | undefined): string | number | boolean | undefined {
+function extractValue(
+  value: AxValue | undefined,
+): string | number | boolean | undefined {
   if (!value || value.value === undefined || value.value === null) {
     return undefined;
   }
@@ -57,7 +65,10 @@ function extractValue(value: AxValue | undefined): string | number | boolean | u
   return value.value;
 }
 
-function buildA11yTree(nodes: AxNode[], preferredNodeId?: number): A11yNode | null {
+function buildA11yTree(
+  nodes: AxNode[],
+  preferredNodeId?: number,
+): A11yNode | null {
   if (nodes.length === 0) {
     return null;
   }
@@ -74,16 +85,21 @@ function buildA11yTree(nodes: AxNode[], preferredNodeId?: number): A11yNode | nu
       node: {
         role: typeof role === "string" ? role : undefined,
         name: typeof name === "string" ? name : undefined,
-        value: typeof value === "string" || typeof value === "number" ? value : undefined,
-        checked: typeof checked === "boolean" ? checked : undefined
+        value:
+          typeof value === "string" || typeof value === "number"
+            ? value
+            : undefined,
+        checked: typeof checked === "boolean" ? checked : undefined,
       },
-      childIds: axNode.childIds ?? []
+      childIds: axNode.childIds ?? [],
     });
   }
 
   let rootId: number | undefined = preferredNodeId;
   if (!rootId || !map.has(rootId)) {
-    const candidate = nodes.find((node) => extractValue(node.role) === "RootWebArea");
+    const candidate = nodes.find(
+      (node) => extractValue(node.role) === "RootWebArea",
+    );
     rootId = candidate?.nodeId ?? nodes[0]?.nodeId;
   }
 
@@ -114,14 +130,16 @@ function buildA11yTree(nodes: AxNode[], preferredNodeId?: number): A11yNode | nu
 
     return {
       ...entry.node,
-      children: children.length > 0 ? children : undefined
+      children: children.length > 0 ? children : undefined,
     };
   };
 
   return build(rootId);
 }
 
-export async function captureSnapshot(options: SnapshotOptions): Promise<SnapshotResult> {
+export async function captureSnapshot(
+  options: SnapshotOptions,
+): Promise<SnapshotResult> {
   const timestamp = new Date().toISOString();
   let dom: string | undefined;
   let a11ySnapshot: A11yNode | null = null;
@@ -132,9 +150,14 @@ export async function captureSnapshot(options: SnapshotOptions): Promise<Snapsho
   try {
     const context = await browser.newContext();
     const page = await context.newPage();
-    const session = (await context.newCDPSession(page)) as unknown as GenericSession;
+    const session = (await context.newCDPSession(
+      page,
+    )) as unknown as GenericSession;
 
-    await page.goto(options.url, { waitUntil: "domcontentloaded", timeout: 30000 });
+    await page.goto(options.url, {
+      waitUntil: "domcontentloaded",
+      timeout: 30000,
+    });
 
     let selectorNodeId: number | undefined;
     if (options.selector) {
@@ -147,7 +170,9 @@ export async function captureSnapshot(options: SnapshotOptions): Promise<Snapsho
           dom = await handle.evaluate((node) => node.outerHTML);
         }
       } else if (options.dom) {
-        throw new Error(`selector not found for DOM slice: ${options.selector}`);
+        throw new Error(
+          `selector not found for DOM slice: ${options.selector}`,
+        );
       }
     }
 
@@ -163,11 +188,13 @@ export async function captureSnapshot(options: SnapshotOptions): Promise<Snapsho
   const { node: limitedSnapshot, truncated } = applyA11yLimits(
     a11ySnapshot,
     options.maxDepth,
-    options.maxNodes
+    options.maxNodes,
   );
 
   if (options.selector && !selectorFound) {
-    warnings.push(`selector not found, falling back to full a11y snapshot: ${options.selector}`);
+    warnings.push(
+      `selector not found, falling back to full a11y snapshot: ${options.selector}`,
+    );
   }
 
   return {
@@ -178,9 +205,9 @@ export async function captureSnapshot(options: SnapshotOptions): Promise<Snapsho
       maxDepth: options.maxDepth,
       maxNodes: options.maxNodes,
       truncated,
-      warnings: warnings.length > 0 ? warnings : undefined
+      warnings: warnings.length > 0 ? warnings : undefined,
     },
     a11y: limitedSnapshot,
-    dom
+    dom,
   };
 }

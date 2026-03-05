@@ -5,7 +5,11 @@ type LimitResult = {
   truncated: boolean;
 };
 
-export function applyA11yLimits(root: A11yNode | null, maxDepth?: number, maxNodes?: number): LimitResult {
+export function applyA11yLimits(
+  root: A11yNode | null,
+  maxDepth?: number,
+  maxNodes?: number,
+): LimitResult {
   if (!root) {
     return { node: null, truncated: false };
   }
@@ -14,8 +18,10 @@ export function applyA11yLimits(root: A11yNode | null, maxDepth?: number, maxNod
     return { node: root, truncated: false };
   }
 
-  let remainingNodes = typeof maxNodes === "number" ? maxNodes : Number.POSITIVE_INFINITY;
-  const depthLimit = typeof maxDepth === "number" ? maxDepth : Number.POSITIVE_INFINITY;
+  let remainingNodes =
+    typeof maxNodes === "number" ? maxNodes : Number.POSITIVE_INFINITY;
+  const depthLimit =
+    typeof maxDepth === "number" ? maxDepth : Number.POSITIVE_INFINITY;
   let truncated = false;
 
   const walk = (node: A11yNode, depth: number): A11yNode | null => {
@@ -48,7 +54,7 @@ export function applyA11yLimits(root: A11yNode | null, maxDepth?: number, maxNod
 
     return {
       ...node,
-      children: limitedChildren.length > 0 ? limitedChildren : undefined
+      children: limitedChildren.length > 0 ? limitedChildren : undefined,
     };
   };
 

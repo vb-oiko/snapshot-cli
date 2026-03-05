@@ -7,6 +7,10 @@
   },
   "main": "dist/cli.js",
   "types": "dist/cli.d.ts",
+  "exports": {
+    ".": "./dist/cli.js",
+    "./fixtures": "./dist/fixtures.js"
+  },
   "files": [
     "dist"
   ],
@@ -15,6 +19,7 @@
     "format": "biome format .",
     "lint": "biome lint .",
     "check": "biome check .",
+    "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "postinstall": "node scripts/lefthook-install.js"
   },
@@ -24,9 +29,10 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^20.11.30",
     "@biomejs/biome": "^1.7.3",
+    "@types/node": "^20.11.30",
     "lefthook": "^1.6.18",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^4.0.18"
   }
 }

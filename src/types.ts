@@ -1,5 +1,51 @@
 export type OutputFormat = "json" | "md";
 
+export interface SessionState {
+  pid: number;
+  port: number;
+  startedAt: string;
+}
+
+export interface SmartOutputResult {
+  inline: boolean;
+  content?: string | unknown;
+  dataUri?: string;
+  file?: string;
+  size: number;
+  lines?: number;
+  mimeType: string;
+}
+
+export interface NetworkRecord {
+  type: "request" | "response";
+  timestamp: string;
+  url: string;
+  method: string;
+  headers: Record<string, string>;
+  // request-only
+  postData?: string;
+  // response-only
+  status?: number;
+  body?: string;
+  bodySize?: number;
+  bodyTruncated?: boolean;
+  bodyFile?: string;
+}
+
+export interface ConsoleMessage {
+  level: string;
+  text: string;
+  timestamp: string;
+  url: string;
+  lineNumber: number;
+}
+
+export interface ConsoleBuffer {
+  messages: ConsoleMessage[];
+  _truncated: boolean;
+  _droppedCount: number;
+}
+
 export interface SnapshotOptions {
   url: string;
   out: string;

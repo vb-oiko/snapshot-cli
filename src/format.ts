@@ -63,7 +63,11 @@ function formatA11yLine(node: A11yNode): string {
   return parts.length > 0 ? parts.join(" ") : "node";
 }
 
-function renderA11yTree(node: A11yNode | null, depth: number, parts: MarkdownParts): void {
+function renderA11yTree(
+  node: A11yNode | null,
+  depth: number,
+  parts: MarkdownParts,
+): void {
   if (!node) {
     return;
   }
@@ -90,7 +94,7 @@ export function formatMarkdown(result: SnapshotResult): string {
   if (result.a11y) {
     renderA11yTree(result.a11y, 0, parts);
   } else {
-    parts.lines.push("- (no snapshot)" );
+    parts.lines.push("- (no snapshot)");
   }
 
   if (result.dom) {
