@@ -84,7 +84,7 @@ async function main(): Promise<void> {
   ensureDirs();
   browserServer = await chromium.launchServer({ headless: false });
   browser = await chromium.connect(browserServer.wsEndpoint());
-  const context = await browser.newContext();
+  const context = await browser.newContext({ viewport: { width: 1710, height: 1080 } });
   page = await context.newPage();
   await page.goto("about:blank");
 
